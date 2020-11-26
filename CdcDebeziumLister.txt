@@ -1,0 +1,28 @@
+package com.digitaldots.foundation.kafka.listener;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaHandler;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Component
+@Transactional
+public class DebeziumListener {
+
+    @Value("${topic.debezium}")
+    String topicName;
+
+    @Value("${spring.kafka.consumer.group-id}")
+    String groupId;
+
+    @KafkaListener(topics = "${topic.debezium}", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaHandler
+    public void listenCdcChanges(@Payload Object studioUser) throws Exception {
+        log.info("Consumed Message is "+studioUser);
+        studioUser.getClass().getCanonicalName();
+    }
+}
